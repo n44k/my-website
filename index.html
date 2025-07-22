@@ -3,20 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home</title>
+  <title>Home (Login Protected)</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
 </head>
 <body>
   <div class="container">
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
 
-    <h1>Welcome!</h1>
-    <p>このページは私の個人サイトです。ここでは概要をご紹介しています。</p>
+    <!-- ログインフォーム -->
+    <div id="loginScreen">
+      <h2>ログイン</h2>
+      <input type="password" id="loginPassword" placeholder="パスワードを入力" />
+      <button onclick="login()">ログイン</button>
+      <p id="loginError" style="color: red; display: none;">パスワードが間違っています。</p>
+    </div>
+
+    <!-- メインページ -->
+    <div id="mainContent" style="display: none;">
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <h1>Welcome!</h1>
+      <p>このページはログイン後に表示される個人用サイトのホームです。</p>
+    </div>
+
   </div>
 </body>
 </html>
