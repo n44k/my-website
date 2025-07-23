@@ -3,41 +3,59 @@ import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebase
 import { collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 document.getElementById('signupBtn').addEventListener('click', async () => {
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
+  const username = document.getElementById('signupUsername').value.trim();
   const pin = document.getElementById('signupPin').value.trim();
-  const msg = document.getElementById('signupMessage');
-  msg.textContent = '';
+  const password = document.getElementById('signupPassword').value;
+  const error = document.getElementById('signupError');
+  const success = document.getElementById('signupSuccess');
+  error.textContent = '';
+  success.textContent = '';
 
+  if (!username || !pin || !password) {
+    error.textContent = 'すべての項目を入力してください。';
+    return;
+  }
   if (!/^\d{4}$/.test(pin)) {
-    msg.textContent = 'PINは4桁の数字を入力してください。';
+    error.textContent = 'PINは4桁の数字で入力してください。';
     return;
   }
 
   try {
-    const q = query(collection(db, "users"), where("pin", "==", pin));
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) {
-      msg.textContent = 'そのPINはすでに使用されています。';
-      return;
+    // PINの重複チェック
+    const qPin = query(collection(db, "users"), where("pin", "==", pin));
+    const pinSnap = await getDocs(qPin);
+    if (!pinSnap.empty) {
+      throw new Error('このPINは既に使われています。');
     }
 
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    // ユーザー名の重複チェック
+    const qUser = query(collection(db, "users"), where("username", "==", username));
+    const userSnap = await getDocs(qUser);
+    if (!userSnap.empty) {
+      throw new Error('このユーザー名は既に使われています。');
+    }
+
+    // メールアドレスは username@example.com の形式で仮作成
+    const email = `${username}@example.com`;
+
+    // Firebase Authでユーザー作成
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+    // Firestoreにユーザー情報保存
     await addDoc(collection(db, "users"), {
-      email: email,
-      pin: pin,
-      uid: userCred.user.uid
+      uid: userCredential.user.uid,
+      username,
+      pin,
+      email
     });
-    
-    msg.style.color = 'green';
-    msg.innerHTML = '登録成功！<br><span class="loading">ログインページへ移動中...</span>';
-    
-    // リダイレクト
+
+    success.textContent = '登録に成功しました。ログインページへ移動します...';
+
     setTimeout(() => {
       window.location.href = 'index.html';
-    }, 3000);
-    msg.style.color = 'green';
-  } catch (err) {
-    msg.textContent = `登録失敗: ${err.message}`;
+    }, 2000);
+
+  } catch (e) {
+    error.textContent = e.message;
   }
 });
