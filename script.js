@@ -1,28 +1,32 @@
-// ページ読み込み時にナビリンクの active クラスをセット
-window.addEventListener("DOMContentLoaded", () => {
-  const currentPage = location.pathname.split("/").pop();
-  const navLinks = document.querySelectorAll("nav a");
+import { auth, db } from './firebase-config.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-  navLinks.forEach(link => {
-    if (link.getAttribute("href") === currentPage) {
-      link.classList.add("active");
-    }
-  });
-});
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const pin = document.getElementById('loginPin').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const error = document.getElementById('loginError');
+  error.textContent = '';
 
-// ログイン関数
-function login() {
-  const input = document.getElementById("loginPassword").value;
-  const errorMsg = document.getElementById("loginError");
-
-  // あまり見ないで欲しいっす。ちなみに誕生日。
-  if (input === "1001") {
-    // ログイン成功 → フォーム非表示、コンテンツ表示
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("mainContent").style.display = "block";
-    errorMsg.style.display = "none";
-  } else {
-    // エラーメッセージ表示
-    errorMsg.style.display = "block";
+  if (!/^\d{4}$/.test(pin)) {
+    error.textContent = 'PINは4桁の数字で入力してください。';
+    return;
   }
-}
+
+  try {
+    const q = query(collection(db, "users"), where("pin", "==", pin));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      error.textContent = 'そのPINは存在しません。';
+      return;
+    }
+
+    const user = snapshot.docs[0].data();
+    const email = user.email;
+
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = 'admin.html'; // ログイン成功後の遷移先（任意）
+  } catch (err) {
+    error.textContent = `ログイン失敗: ${err.message}`;
+  }
+});
