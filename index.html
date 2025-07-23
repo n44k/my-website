@@ -2,22 +2,19 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ログイン</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h2>ログイン</h2>
-    <input type="text" id="loginPin" placeholder="4桁のPIN" maxlength="4" />
-    <input type="password" id="loginPassword" placeholder="パスワード" />
+    <input type="text" id="loginUsername" placeholder="ユーザー名 または PIN を入力" />
+    <input type="password" id="loginPassword" placeholder="パスワードを入力" />
     <button id="loginBtn">ログイン</button>
-    <p id="loginError" class="error-message"></p>
-    
-    <p style="margin-top: 1em; text-align: center;">
-      アカウントをお持ちでない方は
-      <button onclick="window.location.href='signup.html'">新規登録</button>
-    </p>
+    <p id="loginError" style="color: red;"></p>
+
+    <p>新規登録は <a href="signup.html">こちら</a></p>
   </div>
 
   <script type="module" src="script.js"></script>
