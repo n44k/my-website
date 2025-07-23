@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新規登録</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>サインアップ</h2>
+    <input type="email" id="signupEmail" placeholder="メールアドレス" />
+    <input type="password" id="signupPassword" placeholder="パスワード" />
+    <input type="text" id="signupPin" placeholder="4桁のPIN" maxlength="4" />
+    <button id="signupBtn">登録</button>
+    <p id="signupMessage" class="error-message"></p>
+  </div>
+
+  <script type="module" src="signup.js"></script>
+</body>
+</html>
