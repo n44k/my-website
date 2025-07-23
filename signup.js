@@ -28,8 +28,14 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
       pin: pin,
       uid: userCred.user.uid
     });
-
-    msg.textContent = '登録成功！';
+    
+    msg.style.color = 'green';
+    msg.innerHTML = '登録成功！<br><span class="loading">ログインページへ移動中...</span>';
+    
+    // リダイレクト
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 3000);
     msg.style.color = 'green';
   } catch (err) {
     msg.textContent = `登録失敗: ${err.message}`;
