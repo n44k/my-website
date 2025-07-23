@@ -2,18 +2,20 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>新規登録</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h2>サインアップ</h2>
-    <input type="email" id="signupEmail" placeholder="メールアドレス" />
-    <input type="password" id="signupPassword" placeholder="パスワード" />
-    <input type="text" id="signupPin" placeholder="4桁のPIN" maxlength="4" />
+    <h2>新規登録</h2>
+    <input type="text" id="signupUsername" placeholder="ユーザー名を入力" />
+    <input type="text" id="signupPin" placeholder="4桁のPINを入力" maxlength="4" />
+    <input type="password" id="signupPassword" placeholder="パスワードを入力" />
     <button id="signupBtn">登録</button>
-    <p id="signupMessage" class="error-message"></p>
+    <p id="signupError" style="color: red;"></p>
+    <p id="signupSuccess" style="color: green;"></p>
+    <p><a href="index.html">ログインページへ戻る</a></p>
   </div>
 
   <script type="module" src="signup.js"></script>
