@@ -35,13 +35,13 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
       throw new Error('このユーザー名は既に使われています。');
     }
 
-    // メールアドレスは username@example.com の形式で仮作成
+    // メールアドレスは仮の形式（Firebase用）
     const email = `${username}@example.com`;
 
-    // Firebase Authでユーザー作成
+    // Firebase Auth に登録
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Firestoreにユーザー情報保存
+    // Firestore に保存
     await addDoc(collection(db, "users"), {
       uid: userCredential.user.uid,
       username,
@@ -49,11 +49,11 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
       email
     });
 
-    success.textContent = '登録に成功しました。ログインページへ移動します...';
+    success.textContent = '登録に成功しました！ログインページに移動します...';
 
     setTimeout(() => {
       window.location.href = 'index.html';
-    }, 2000);
+    }, 2500); // 2.5秒後
 
   } catch (e) {
     error.textContent = e.message;
