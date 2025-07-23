@@ -1,32 +1,37 @@
 import { auth, db } from './firebase-config.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-document.getElementById('loginBtn').addEventListener('click', async () => {
-  const pin = document.getElementById('loginPin').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const error = document.getElementById('loginError');
-  error.textContent = '';
-
-  if (!/^\d{4}$/.test(pin)) {
-    error.textContent = 'PINは4桁の数字で入力してください。';
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert('ログインが必要です');
+    window.location.href = 'index.html';
     return;
   }
 
+  // 管理者はadminユーザーとして認証されていないため
+  // ここでは特にアクセス制限はしません
+  // 本格的な管理権限管理は別途検討してください
+
+  const listDiv = document.getElementById('userList');
+  listDiv.textContent = 'ユーザー一覧を読み込み中...';
+
   try {
-    const q = query(collection(db, "users"), where("pin", "==", pin));
-    const snapshot = await getDocs(q);
-    if (snapshot.empty) {
-      error.textContent = 'そのPINは存在しません。';
-      return;
-    }
+    const snapshot = await getDocs(collection(db, "users"));
+    listDiv.textContent = '';
 
-    const user = snapshot.docs[0].data();
-    const email = user.email;
-
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = 'admin.html'; // ログイン成功後の遷移先（任意）
-  } catch (err) {
-    error.textContent = `ログイン失敗: ${err.message}`;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const p = document.createElement('p');
+      p.textContent = `ユーザー名: ${data.username} | PIN: ${data.pin}`;
+      listDiv.appendChild(p);
+    });
+  } catch {
+    listDiv.textContent = 'ユーザー情報の取得に失敗しました。';
   }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = 'index.html';
 });
